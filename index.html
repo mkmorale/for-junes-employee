@@ -1,16 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>For My Valentine</title>
+    <meta charset="UTF-8">
+    <title>Valentine's Quest</title>
     <style>
-        body { background-color: #ffebf0; font-family: 'Courier New', Courier, monospace; text-align: center; padding-top: 50px; }
-        .pixel-heart { color: #e74c3c; font-size: 100px; }
-        h1 { color: #5d4037; }
+        /* Stardew-inspired color palette */
+        :root {
+            --wood-brown: #9d6441;
+            --wood-light: #d6a17b;
+            --grass-green: #71aa3a;
+            --heart-red: #e32d2d;
+            --text-color: #5d4037;
+        }
+
+        body {
+            background-color: var(--grass-green);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* The Sign Board */
+        .sign {
+            background-color: var(--wood-light);
+            border: 8px solid var(--wood-brown);
+            padding: 40px;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        /* Pixelated Heart Animation */
+        .heart {
+            font-size: 80px;
+            color: var(--heart-red);
+            animation: bounce 0.6s infinite alternate;
+            cursor: pointer;
+            filter: drop-shadow(4px 4px 0px #801a1a);
+        }
+
+        @keyframes bounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); }
+        }
+
+        h1 { font-size: 3rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 1.2rem; font-weight: bold; }
+
+        /* Little decorative leaves */
+        .leaf { position: absolute; width: 20px; height: 20px; background: #4e8021; border-radius: 0 100%; top: -10px; left: -10px; transform: rotate(-15deg); }
     </style>
 </head>
 <body>
-    <div class="pixel-heart">❤</div>
-    <h1>Will you be my Valentine?</h1>
-    <p>Press any key to start our adventure...</p>
+
+    <div class="sign">
+        <div class="leaf"></div>
+        <div class="heart" onclick="alert('Quest Log Updated: You found a Valentine!')">❤</div>
+        <h1>Valentine?</h1>
+        <p>A gift from your secret admirer...</p>
+        <p style="font-size: 0.8rem; margin-top: 20px;">[ Click the heart to accept ]</p>
+    </div>
+
 </body>
 </html>
