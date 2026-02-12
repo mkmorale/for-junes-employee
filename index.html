@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valentine's Quest</title>
     <style>
         /* Stardew-inspired color palette */
@@ -10,19 +11,19 @@
             --wood-light: #d6a17b;
             --grass-green: #71aa3a;
             --heart-red: #e32d2d;
-            --text-color: #5d4037;
+            --btn-hover: #5d4037;
+            --sky-pink: #ffadad;
         }
 
         body {
             background-color: var(--grass-green);
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
             margin: 0;
             font-family: 'Courier New', Courier, monospace;
-            color: var(--text-color);
+            transition: background-color 2s ease;
             overflow: hidden;
         }
 
@@ -30,42 +31,123 @@
         .sign {
             background-color: var(--wood-light);
             border: 8px solid var(--wood-brown);
-            padding: 40px;
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+            padding: 30px;
             text-align: center;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+            max-width: 400px;
             position: relative;
+            z-index: 10;
         }
 
-        /* Pixelated Heart Animation */
         .heart {
-            font-size: 80px;
+            font-size: 60px;
             color: var(--heart-red);
-            animation: bounce 0.6s infinite alternate;
+            animation: pulse 1s infinite;
+            filter: drop-shadow(3px 3px 0px #801a1a);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        h1 { font-size: 2rem; color: var(--btn-hover); margin: 15px 0; }
+
+        .btn-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        button {
+            background-color: var(--wood-brown);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1rem;
             cursor: pointer;
-            filter: drop-shadow(4px 4px 0px #801a1a);
+            box-shadow: 4px 4px 0px #5d4037;
         }
 
-        @keyframes bounce {
-            from { transform: scale(1); }
-            to { transform: scale(1.2); }
+        button:active {
+            box-shadow: 0px 0px 0px #5d4037;
+            transform: translate(4px, 4px);
         }
 
-        h1 { font-size: 3rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
-        p { font-size: 1.2rem; font-weight: bold; }
+        /* The Hidden Photo Section */
+        #photo-reveal {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 1.5s forwards;
+        }
 
-        /* Little decorative leaves */
-        .leaf { position: absolute; width: 20px; height: 20px; background: #4e8021; border-radius: 0 100%; top: -10px; left: -10px; transform: rotate(-15deg); }
+        #photo-reveal img {
+            max-width: 100%;
+            height: auto;
+            border: 8px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-radius: 2px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Decorative Leaf */
+        .leaf { position: absolute; width: 20px; height: 20px; background: #4e8021; border-radius: 0 100%; top: -12px; left: -12px; transform: rotate(-15deg); border: 2px solid var(--btn-hover); }
     </style>
 </head>
 <body>
 
-    <div class="sign">
+    <div class="sign" id="main-sign">
         <div class="leaf"></div>
-        <div class="heart" onclick="alert('Quest Log Updated: You found a Valentine!')">❤</div>
-        <h1>Valentine?</h1>
-        <p>A gift from your secret admirer...</p>
-        <p style="font-size: 0.8rem; margin-top: 20px;">[ Click the heart to accept ]</p>
+        <div class="heart">❤</div>
+        <h1 id="question">Will you be my Valentine?</h1>
+        
+        <div class="btn-container" id="controls">
+            <button onclick="revealPhoto()">YES</button>
+            <button onmouseover="moveButton(this)" id="no-btn">NO</button>
+        </div>
+
+        <div id="photo-reveal">
+            <img src="gift.png" alt="Happy Valentine's Day!">
+            <h2 style="color: var(--btn-hover); margin-top: 15px;">Quest Complete!</h2>
+        </div>
     </div>
+
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function revealPhoto() {
+            // 1. Play Music
+            const music = document.getElementById('bg-music');
+            music.play().catch(e => console.log("Music waiting for interaction"));
+
+            // 2. Visual Changes
+            document.getElementById('controls').style.display = 'none';
+            document.getElementById('question').innerText = "Found: Special Item!";
+            document.body.style.backgroundColor = "var(--sky-pink)";
+            
+            // 3. Reveal Photo
+            document.getElementById('photo-reveal').style.display = 'block';
+        }
+
+        function moveButton(btn) {
+            // Makes the NO button jump away
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            btn.style.position = 'fixed';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+        }
+    </script>
 
 </body>
 </html>
