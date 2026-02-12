@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valentine's Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        /* Stardew-inspired color palette */
         :root {
             --wood-brown: #9d6441;
             --wood-light: #d6a17b;
@@ -22,28 +22,29 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'VT323', monospace; /* Stardew Style Font */
             transition: background-color 2s ease;
             overflow: hidden;
         }
 
-        /* The Sign Board */
         .sign {
             background-color: var(--wood-light);
-            border: 8px solid var(--wood-brown);
+            border: 6px solid var(--wood-brown);
             padding: 30px;
             text-align: center;
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
-            max-width: 400px;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 90%;
             position: relative;
             z-index: 10;
         }
 
         .heart {
-            font-size: 60px;
+            font-size: 80px;
             color: var(--heart-red);
             animation: pulse 1s infinite;
-            filter: drop-shadow(3px 3px 0px #801a1a);
+            filter: drop-shadow(4px 4px 0px #801a1a);
+            margin-bottom: 10px;
         }
 
         @keyframes pulse {
@@ -52,23 +53,29 @@
             100% { transform: scale(1); }
         }
 
-        h1 { font-size: 2rem; color: var(--btn-hover); margin: 15px 0; }
+        h1 { 
+            font-size: 3.5rem; 
+            color: var(--btn-hover); 
+            margin: 10px 0;
+            min-height: 1.2em; /* Prevents jumping while typing */
+        }
 
         .btn-container {
             margin-top: 20px;
             display: flex;
             gap: 20px;
             justify-content: center;
+            opacity: 0; /* Hidden until typing is done */
+            transition: opacity 1s ease;
         }
 
         button {
             background-color: var(--wood-brown);
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            font-size: 1rem;
+            padding: 10px 30px;
+            font-family: 'VT323', monospace;
+            font-size: 1.8rem;
             cursor: pointer;
             box-shadow: 4px 4px 0px #5d4037;
         }
@@ -78,7 +85,6 @@
             transform: translate(4px, 4px);
         }
 
-        /* The Hidden Photo Section */
         #photo-reveal {
             display: none;
             margin-top: 20px;
@@ -88,9 +94,8 @@
         #photo-reveal img {
             max-width: 100%;
             height: auto;
-            border: 8px solid white;
+            border: 6px solid white;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border-radius: 2px;
         }
 
         @keyframes fadeIn {
@@ -98,16 +103,16 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Decorative Leaf */
-        .leaf { position: absolute; width: 20px; height: 20px; background: #4e8021; border-radius: 0 100%; top: -12px; left: -12px; transform: rotate(-15deg); border: 2px solid var(--btn-hover); }
+        .leaf { position: absolute; width: 24px; height: 24px; background: #4e8021; border-radius: 0 100%; top: -15px; left: -15px; transform: rotate(-15deg); border: 3px solid var(--btn-hover); }
     </style>
 </head>
 <body>
 
-    <div class="sign" id="main-sign">
+    <div class="sign">
         <div class="leaf"></div>
         <div class="heart">❤</div>
-        <h1 id="question">Will you be my Valentine?</h1>
+        
+        <h1 id="typewriter"></h1>
         
         <div class="btn-container" id="controls">
             <button onclick="revealPhoto()">YES</button>
@@ -115,38 +120,66 @@
         </div>
 
         <div id="photo-reveal">
-            <img src="gift.png" alt="Happy Valentine's Day!">
-            <h2 style="color: var(--btn-hover); margin-top: 15px;">Quest Complete!</h2>
+            <img src="gift.png" alt="Valentine Image">
+            <h2 id="final-msg" style="color: var(--btn-hover); font-size: 2.5rem; margin-top: 15px;"></h2>
         </div>
     </div>
 
     <audio id="bg-music" loop>
-        <source src="music.mp3" type="audio/mpeg">
+        <source src="music.wav" type="audio/wav">
     </audio>
 
     <script>
-        function revealPhoto() {
-            // 1. Play Music
-            const music = document.getElementById('bg-music');
-            music.play().catch(e => console.log("Music waiting for interaction"));
+        const message = "Will you be my Valentine?";
+        const finalMsg = "Quest Complete!";
+        let i = 0;
 
-            // 2. Visual Changes
+        // Function for the typewriter effect
+        function typeWriter() {
+            if (i < message.length) {
+                document.getElementById("typewriter").innerHTML += message.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100); // Speed of typing
+            } else {
+                // Show buttons once typing is finished
+                document.getElementById("controls").style.opacity = "1";
+            }
+        }
+
+        function revealPhoto() {
+            // Play Music
+            const music = document.getElementById('bg-music');
+            music.play();
+
+            // UI Transitions
             document.getElementById('controls').style.display = 'none';
-            document.getElementById('question').innerText = "Found: Special Item!";
+            document.getElementById('typewriter').style.display = 'none';
             document.body.style.backgroundColor = "var(--sky-pink)";
-            
-            // 3. Reveal Photo
             document.getElementById('photo-reveal').style.display = 'block';
+
+            // Type the final message
+            typeFinalMsg();
+        }
+
+        let j = 0;
+        function typeFinalMsg() {
+            if (j < finalMsg.length) {
+                document.getElementById("final-msg").innerHTML += finalMsg.charAt(j);
+                j++;
+                setTimeout(typeFinalMsg, 100);
+            }
         }
 
         function moveButton(btn) {
-            // Makes the NO button jump away
             const x = Math.random() * (window.innerWidth - btn.offsetWidth);
             const y = Math.random() * (window.innerHeight - btn.offsetHeight);
             btn.style.position = 'fixed';
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
         }
+
+        // Start the typewriter when the page loads
+        window.onload = typeWriter;
     </script>
 
 </body>
